@@ -1,0 +1,39 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Tank {
+  id           String        @id @default(cuid())
+  name         String
+  diameter     Float
+  height       Float
+  capacity     Float
+  sensorHeight Float
+  location     String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  fuelReadings FuelReading[]
+
+  @@map("tanks")
+}
+
+model FuelReading {
+  id                   String   @id @default(cuid())
+  tankId               String
+  distanceToFuel       Float
+  fuelLevelLiters      Float
+  fuelLevelPercentage  Float
+  fuelHeight           Float
+  timestamp            DateTime @default(now())
+  tank                 Tank     @relation(fields: [tankId], references: [id], onDelete: Cascade)
+
+  @@map("fuel_readings")
+  @@index([tankId])
+  @@index([timestamp])
+}

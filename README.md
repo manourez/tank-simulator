@@ -1,85 +1,403 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🛢️ Fuel Tank Simulator
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A production-ready NestJS fuel tank monitoring system with **Prisma ORM**, SQLite database, automated sensor readings, real-time updates via Server-Sent Events (SSE), and comprehensive monitoring capabilities.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## ✨ Features
 
-## Description
+### 🔄 **Automated Sensor Readings**
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Scheduled readings every 30 minutes** using NestJS Scheduler
+- **Realistic fuel consumption simulation** with different scenarios:
+  - Normal consumption patterns
+  - Refilling events
+  - Emergency low-fuel situations
+  - Tank capacity constraints
 
-## Project setup
+### 📊 **Real-time Monitoring**
 
-```bash
-$ pnpm install
+- **Server-Sent Events (SSE)** for live fuel level updates
+- **Real-time web dashboard** with visual fuel level indicators
+- **Status-based color coding**: Normal (Green), Low (Orange), Critical (Red), Full (Blue)
+- **Connection status monitoring** with automatic reconnection
+
+### 🗄️ **Database Integration**
+
+- **Prisma ORM** with SQLite database
+- **Tank management by ID** with persistent storage
+- **Historical readings storage** with database relationships
+- **Seeded sample data** with tanks starting at 100% fuel capacity
+- **Cylindrical tank focus** as requested
+
+### 🎯 **Production Ready**
+
+- **Error handling and validation**
+- **Comprehensive logging**
+- **CORS enabled** for web client integration
+- **Database migrations** with Prisma
+- **TypeScript** with full type safety
+- **Unit and E2E testing**
+
+## 🏗️ **Architecture**
+
+```
+src/
+├── fuel-tank/
+│   ├── services/
+│   │   ├── database.service.ts         # Prisma-based database operations
+│   │   └── sensor-simulation.service.ts # Realistic sensor reading simulation
+│   ├── fuel-tank.controller.ts       # REST API and SSE endpoints
+│   ├── fuel-tank.service.ts          # Core business logic
+│   └── fuel-tank.module.ts           # NestJS module configuration
+├── prisma/
+│   ├── prisma.service.ts              # Prisma client service
+│   └── prisma.module.ts               # Prisma module
+├── app.module.ts                      # Main app with ScheduleModule
+└── main.ts                           # Bootstrap configuration
+
+prisma/
+├── schema.prisma                      # Database schema definition
+├── dev.db                            # SQLite database file
+└── seed.ts                           # Database seeding script
 ```
 
-## Compile and run the project
+## 🚀 **API Endpoints**
+
+### **Real-time Events**
+
+- `GET /fuel-tank/events` - **Server-Sent Events** stream for live updates
+
+### **Tank Management**
+
+- `GET /fuel-tank/tanks` - Get all tanks
+- `GET /fuel-tank/tanks/:id` - Get specific tank by ID
+- `GET /fuel-tank/tanks/:id/latest` - Get latest reading for a tank
+
+### **Readings**
+
+- `GET /fuel-tank/latest` - Get latest readings for all tanks
+- `POST /fuel-tank/tanks/:id/trigger-reading` - Manual reading trigger (testing)
+
+### **System**
+
+- `GET /health` - Health check endpoint
+
+## 📈 **Sample Data**
+
+The system comes pre-configured with 3 sample tanks, all starting at **100% fuel capacity**:
+
+### **TANK-001** - Main Storage Tank A
+
+- **Location**: Building A - Ground Floor
+- **Capacity**: 19,635L (2.5m diameter × 4m height)
+- **Type**: Cylindrical
+- **Initial Fuel**: 19,635L (100%)
+
+### **TANK-002** - Backup Storage Tank B
+
+- **Location**: Building B - Basement
+- **Capacity**: 10,996L (2.0m diameter × 3.5m height)
+- **Type**: Cylindrical
+- **Initial Fuel**: 10,996L (100%)
+
+### **TANK-003** - Emergency Reserve Tank
+
+- **Location**: Emergency Bay
+- **Capacity**: 6,362L (1.8m diameter × 2.5m height)
+- **Type**: Cylindrical
+- **Initial Fuel**: 6,362L (100%)
+
+## 🔧 **Installation & Setup**
+
+### **Prerequisites**
+
+- Node.js 18+
+- pnpm (recommended) or npm
+
+### **Install Dependencies**
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+pnpm install
 ```
 
-## Run tests
+### **Database Setup**
 
 ```bash
-# unit tests
-$ pnpm run test
+# Generate Prisma client
+npx prisma generate
 
-# e2e tests
-$ pnpm run test:e2e
+# Push schema to database
+npx prisma db push
 
-# test coverage
-$ pnpm run test:cov
+# Seed database with sample tanks at 100% fuel
+npm run db:seed
 ```
 
-## Resources
+### **Start Development Server**
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+pnpm run start:dev
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+The server will start on **port 3002** and automatically:
 
-## Support
+1. ✅ Connect to SQLite database via Prisma
+2. ✅ Load tanks from database (seeded at 100% fuel)
+3. ✅ Begin automated readings every 30 minutes
+4. ✅ Start SSE stream for real-time updates
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### **Database Management**
 
-## Stay in touch
+```bash
+# View database in browser
+npx prisma studio
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# Reset database (use with caution)
+npx prisma migrate reset --force
 
-## License
+# Re-seed database
+npm run db:seed
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 📱 **Web Dashboard**
+
+Open `test-sse.html` in your browser to see:
+
+- **Real-time fuel level visualization** with progress bars
+- **Live connection status** indicator
+- **Color-coded tank statuses** (Normal/Low/Critical/Full)
+- **Detailed tank information** (volume, height, capacity, location)
+- **Live updates log** with timestamps
+- **Professional tank monitoring interface**
+
+## 📡 **Server-Sent Events Usage**
+
+### **JavaScript Client Example**
+
+```javascript
+const eventSource = new EventSource('http://localhost:3002/fuel-tank/events')
+
+eventSource.addEventListener('fuel_level_update', function (event) {
+  const data = JSON.parse(event.data)
+
+  console.log(`Tank ${data.tankName}: ${data.fuelLevelPercentage}%`)
+  console.log(`Status: ${data.status}`)
+  console.log(`Volume: ${data.fuelLevelLiters}L`)
+})
+```
+
+### **Event Data Structure**
+
+```json
+{
+  "type": "fuel_level_update",
+  "data": {
+    "tankId": "TANK-001",
+    "tankName": "Main Storage Tank A",
+    "fuelLevelLiters": 10891.03,
+    "fuelLevelPercentage": 55.47,
+    "fuelHeight": 2.219,
+    "distanceToFuel": 178.13,
+    "tankCapacity": 19635,
+    "timestamp": "2025-07-23T16:03:01.799Z",
+    "status": "normal"
+  }
+}
+```
+
+## 🧮 **Fuel Calculation**
+
+**For Cylindrical Tanks:**
+
+- **Formula**: `Volume = π × r² × fuel_height`
+- **Conversion**: `Cubic meters → Liters (×1000)`
+- **Percentage**: `(Current Volume / Total Capacity) × 100`
+
+**Sensor Logic:**
+
+- **Distance Measurement**: Sensor at tank top measures distance to fuel surface
+- **Fuel Height**: `Tank Height - Sensor Distance`
+- **Bounds Checking**: Ensures fuel height ≥ 0 and ≤ tank height
+
+## 🤖 **Sensor Simulation**
+
+The system simulates realistic scenarios:
+
+### **Consumption Patterns**
+
+- **Normal**: 0.5-3cm fuel decrease per reading
+- **Emergency**: Minimal consumption when fuel < 10%
+
+### **Refilling Events**
+
+- **Triggered**: When fuel < 25% (60% probability)
+- **Amount**: 2-10cm fuel increase per reading
+
+### **Sensor Accuracy**
+
+- **Noise**: ±1cm random variation
+- **Precision**: Rounded to 0.01cm
+
+## 🔍 **Testing**
+
+### **Run Unit Tests**
+
+```bash
+pnpm run test
+```
+
+### **Run E2E Tests**
+
+```bash
+pnpm run test:e2e
+```
+
+### **Test Coverage**
+
+```bash
+pnpm run test:cov
+```
+
+### **Manual API Testing**
+
+```bash
+# Get all tanks
+curl http://localhost:3002/fuel-tank/tanks
+
+# Get specific tank
+curl http://localhost:3002/fuel-tank/tanks/TANK-001
+
+# Get latest readings
+curl http://localhost:3002/fuel-tank/latest
+
+# Get latest reading for specific tank
+curl http://localhost:3002/fuel-tank/tanks/TANK-001/latest
+
+# Trigger manual reading
+curl -X POST http://localhost:3002/fuel-tank/tanks/TANK-001/trigger-reading
+
+# Test SSE (keep connection open)
+curl -N http://localhost:3002/fuel-tank/events
+```
+
+### **Database Testing**
+
+```bash
+# View data in Prisma Studio
+npx prisma studio
+
+# Check database tables
+sqlite3 prisma/dev.db ".tables"
+
+# Query tanks
+sqlite3 prisma/dev.db "SELECT * FROM Tank;"
+
+# Query readings
+sqlite3 prisma/dev.db "SELECT * FROM FuelReading ORDER BY timestamp DESC LIMIT 10;"
+```
+
+## 📝 **Logs**
+
+The system provides comprehensive logging:
+
+- ✅ **Database connection** and Prisma client initialization
+- ✅ **Tank loading** from database on startup
+- 🔄 **Automated reading cycles** (every 30 minutes)
+- 📊 **Significant fuel level changes** (>0.1% difference)
+- ⚠️ **Status changes** (Normal → Low → Critical → Full)
+- 💾 **Database operations** (readings saved, cleanup)
+
+### **Sample Log Output**
+
+```
+[NestApplication] Starting Nest application...
+[InstanceLoader] PrismaModule dependencies initialized
+[FuelTankService] Performing automated sensor readings for all tanks...
+[FuelTankService] Tank TANK-001: 99.5% (19541L) - Status: full
+[FuelTankService] Tank TANK-002: 98.8% (10865L) - Status: full
+[FuelTankService] Tank TANK-003: 99.2% (6312L) - Status: full
+[FuelTankService] Completed readings for 3 tanks
+```
+
+## 🗄️ **Database Schema**
+
+### **Tank Model**
+
+```prisma
+model Tank {
+  id           String        @id
+  name         String
+  diameter     Float
+  height       Float
+  capacity     Int
+  sensorHeight Float
+  location     String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  readings     FuelReading[] // One-to-many relationship
+}
+```
+
+### **FuelReading Model**
+
+```prisma
+model FuelReading {
+  id                   String   @id @default(cuid())
+  tankId               String
+  distanceToFuel       Float
+  fuelLevelLiters      Float
+  fuelLevelPercentage  Float
+  fuelHeight           Float
+  timestamp            DateTime @default(now())
+  tank                 Tank     @relation(fields: [tankId], references: [id], onDelete: Cascade)
+
+  @@index([tankId])
+  @@index([timestamp])
+}
+```
+
+## 🔮 **Future Enhancements**
+
+- **Database Scaling**: PostgreSQL support for production environments
+- **Authentication**: Add JWT-based authentication for API endpoints
+- **Tank Configuration**: Dynamic tank creation and modification APIs
+- **Alerts**: Email/SMS notifications for critical fuel levels
+- **Historical Analytics**: Fuel consumption trends and predictions
+- **Mobile App**: React Native app for mobile monitoring
+- **Multi-tenant**: Support for multiple facilities/organizations
+- **Advanced Sensors**: Support for different tank shapes (rectangular, spherical)
+
+## 🤝 **Built With**
+
+- **[NestJS](https://nestjs.com/)** - Progressive Node.js framework
+- **[Prisma ORM](https://www.prisma.io/)** - Modern database toolkit
+- **[SQLite](https://www.sqlite.org/)** - Lightweight database engine
+- **[NestJS Schedule](https://docs.nestjs.com/techniques/task-scheduling)** - Cron-based task scheduling
+- **[RxJS](https://rxjs.dev/)** - Reactive programming for SSE
+- **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
+- **Server-Sent Events** - Real-time browser communication
+- **Jest** - Testing framework
+
+## 📦 **Package Scripts**
+
+```json
+{
+  "start": "nest start",
+  "start:dev": "nest start --watch",
+  "start:debug": "nest start --debug --watch",
+  "start:prod": "node dist/main",
+  "build": "nest build",
+  "test": "jest",
+  "test:watch": "jest --watch",
+  "test:cov": "jest --coverage",
+  "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+  "test:e2e": "jest --config ./test/jest-e2e.json",
+  "db:seed": "ts-node prisma/seed.ts",
+  "db:studio": "prisma studio",
+  "db:generate": "prisma generate",
+  "db:push": "prisma db push"
+}
+```
+
+---
+
+**🚀 Ready for production fuel tank monitoring with Prisma ORM and SQLite!**
