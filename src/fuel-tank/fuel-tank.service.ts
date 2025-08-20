@@ -255,7 +255,7 @@ export class FuelTankService implements OnModuleInit {
     tank: Tank,
     fuelPercentage: number,
   ): Omit<FuelReading, 'id' | 'timestamp'> {
-    const estimatedCapacity = 1000
+    const estimatedCapacity = tank.capacity
     const estimatedHeight = 2.0
     const fuelLevelLiters = (fuelPercentage / 100) * estimatedCapacity
     const fuelHeight = (fuelPercentage / 100) * estimatedHeight

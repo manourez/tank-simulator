@@ -13,6 +13,7 @@ describe('FuelTankController', () => {
     name: 'Main Storage Tank A',
     stationId: 'STN-001',
     fuelType: 'Gasoline',
+    capacity: 1000,
     isLow: false,
     temperature: 22.5,
     pression: 1.2,

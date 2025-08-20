@@ -4,6 +4,7 @@ export interface Tank {
   stationId: string
   fuelType: string
   isLow: boolean
+  capaciy: number
   temperature: number
   pression: number
   createdAt: Date

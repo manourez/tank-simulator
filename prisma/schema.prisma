@@ -14,6 +14,7 @@ model Tank {
   stationId     String
   fuelType      String
   isLow         Boolean     @default(false)
+  capacity      Float
   temperature   Float
   pression      Float
   createdAt     DateTime      @default(now())
