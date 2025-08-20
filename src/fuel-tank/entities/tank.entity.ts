@@ -1,13 +1,14 @@
 export interface Tank {
   id: string
   name: string
-  diameter: number
-  height: number
-  capacity: number
-  sensorHeight: number
-  location?: string
+  stationId: string
+  fuelType: string
+  isLow: boolean
+  temperature: number
+  pression: number
   createdAt: Date
   updatedAt: Date
+  fuelReadings: FuelReading[]
 }
 
 export interface FuelReading {
@@ -30,6 +31,11 @@ interface FuelEventData {
   tankCapacity: number
   timestamp: Date
   status: 'normal' | 'low' | 'critical' | 'full'
+  stationId: string
+  fuelType: string
+  temperature: number
+  pression: number
+  isLow: boolean
 }
 
 export interface FuelLevelEvent {

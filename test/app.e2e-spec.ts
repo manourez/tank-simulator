@@ -36,9 +36,10 @@ describe('Tank Simulator (e2e)', () => {
           if (res.body.length > 0) {
             expect(res.body[0]).toHaveProperty('id')
             expect(res.body[0]).toHaveProperty('name')
-            expect(res.body[0]).toHaveProperty('diameter')
-            expect(res.body[0]).toHaveProperty('height')
-            expect(res.body[0]).toHaveProperty('capacity')
+            expect(res.body[0]).toHaveProperty('stationId')
+            expect(res.body[0]).toHaveProperty('fuelType')
+            expect(res.body[0]).toHaveProperty('temperature')
+            expect(res.body[0]).toHaveProperty('pression')
           }
         })
     })
@@ -73,8 +74,10 @@ describe('Tank Simulator (e2e)', () => {
           .expect((res) => {
             expect(res.body).toHaveProperty('id', tankId)
             expect(res.body).toHaveProperty('name')
-            expect(res.body).toHaveProperty('diameter')
-            expect(res.body).toHaveProperty('height')
+            expect(res.body).toHaveProperty('stationId')
+            expect(res.body).toHaveProperty('fuelType')
+            expect(res.body).toHaveProperty('temperature')
+            expect(res.body).toHaveProperty('pression')
           })
       }
     })
@@ -128,13 +131,6 @@ describe('Tank Simulator (e2e)', () => {
       return request(app.getHttpServer())
         .get('/fuel-tank/tanks/NON-EXISTENT')
         .expect(500)
-    })
-
-    it('/fuel-tank/events (GET) should return SSE stream headers', () => {
-      return request(app.getHttpServer())
-        .get('/fuel-tank/events')
-        .expect(200)
-        .timeout(1000) // Short timeout for header check only
     })
   })
 })

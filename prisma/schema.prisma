@@ -9,19 +9,20 @@ datasource db {
 }
 
 model Tank {
-  id           String        @id @default(cuid())
-  name         String
-  diameter     Float
-  height       Float
-  capacity     Float
-  sensorHeight Float
-  location     String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  fuelReadings FuelReading[]
-
+  id            String      @id @default(cuid())
+  name          String
+  stationId     String
+  fuelType      String
+  isLow         Boolean     @default(false)
+  temperature   Float
+  pression      Float
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  fuelReadings  FuelReading[]
+  
   @@map("tanks")
 }
+
 
 model FuelReading {
   id                   String   @id @default(cuid())

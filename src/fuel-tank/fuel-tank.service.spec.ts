@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
+import { HttpModule } from '@nestjs/axios'
 import { ScheduleModule } from '@nestjs/schedule'
 import { FuelTankService } from './fuel-tank.service'
 import { DatabaseService } from './services/database.service'
@@ -36,7 +37,7 @@ describe('FuelTankService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ScheduleModule.forRoot()],
+      imports: [ScheduleModule.forRoot(), HttpModule],
       providers: [
         FuelTankService,
         SensorSimulationService,
@@ -69,11 +70,11 @@ describe('FuelTankService', () => {
         {
           id: 'TANK-001',
           name: 'Main Storage Tank A',
-          diameter: 2.5,
-          height: 4.0,
-          capacity: 19635,
-          sensorHeight: 4.0,
-          location: 'Building A - Ground Floor',
+          stationId: 'STN-001',
+          fuelType: 'Gasoline',
+          isLow: false,
+          temperature: 22.5,
+          pression: 1.2,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -92,11 +93,11 @@ describe('FuelTankService', () => {
       const mockTank: Tank = {
         id: 'TANK-001',
         name: 'Main Storage Tank A',
-        diameter: 2.5,
-        height: 4.0,
-        capacity: 19635,
-        sensorHeight: 4.0,
-        location: 'Building A - Ground Floor',
+        stationId: 'STN-001',
+        fuelType: 'Gasoline',
+        isLow: false,
+        temperature: 22.5,
+        pression: 1.2,
         createdAt: new Date(),
         updatedAt: new Date(),
       }
@@ -122,11 +123,11 @@ describe('FuelTankService', () => {
       const mockTank: Tank = {
         id: 'TANK-001',
         name: 'Main Storage Tank A',
-        diameter: 2.5,
-        height: 4.0,
-        capacity: 19635,
-        sensorHeight: 4.0,
-        location: 'Building A - Ground Floor',
+        stationId: 'STN-001',
+        fuelType: 'Gasoline',
+        isLow: false,
+        temperature: 22.5,
+        pression: 1.2,
         createdAt: new Date(),
         updatedAt: new Date(),
       }
@@ -156,27 +157,6 @@ describe('FuelTankService', () => {
       await expect(
         service.triggerManualReading('NON-EXISTENT'),
       ).rejects.toThrow('Tank NON-EXISTENT not found')
-    })
-  })
-
-  describe('cylindrical volume calculation', () => {
-    it('should calculate cylindrical volume correctly', () => {
-      // Access private method through type assertion for testing
-      const privateService = service as any
-
-      // Test cylindrical volume calculation
-      // Volume = π × r² × height
-      // For diameter 2m, radius = 1m, height = 3m
-      // Volume = π × 1² × 3 = 3π ≈ 9.42 cubic meters = 9420 liters
-
-      const volume = privateService.calculateCylindricalVolume(3.0, 2.0)
-      expect(volume).toBeCloseTo(9424.78, 1)
-    })
-
-    it('should handle zero height', () => {
-      const privateService = service as any
-      const volume = privateService.calculateCylindricalVolume(0, 2.0)
-      expect(volume).toBe(0)
     })
   })
 

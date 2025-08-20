@@ -25,7 +25,6 @@ A production-ready NestJS fuel tank monitoring system with **Prisma ORM**, SQLit
 - **Prisma ORM** with SQLite database
 - **Tank management by ID** with persistent storage
 - **Historical readings storage** with database relationships
-- **Seeded sample data** with tanks starting at 100% fuel capacity
 - **Cylindrical tank focus** as requested
 
 ### 🎯 **Production Ready**
@@ -56,8 +55,7 @@ src/
 
 prisma/
 ├── schema.prisma                      # Database schema definition
-├── dev.db                            # SQLite database file
-└── seed.ts                           # Database seeding script
+└── dev.db                            # SQLite database file
 ```
 
 ## 🚀 **API Endpoints**
@@ -81,32 +79,7 @@ prisma/
 
 - `GET /health` - Health check endpoint
 
-## 📈 **Sample Data**
-
-The system comes pre-configured with 3 sample tanks, all starting at **100% fuel capacity**:
-
-### **TANK-001** - Main Storage Tank A
-
-- **Location**: Building A - Ground Floor
-- **Capacity**: 19,635L (2.5m diameter × 4m height)
-- **Type**: Cylindrical
-- **Initial Fuel**: 19,635L (100%)
-
-### **TANK-002** - Backup Storage Tank B
-
-- **Location**: Building B - Basement
-- **Capacity**: 10,996L (2.0m diameter × 3.5m height)
-- **Type**: Cylindrical
-- **Initial Fuel**: 10,996L (100%)
-
-### **TANK-003** - Emergency Reserve Tank
-
-- **Location**: Emergency Bay
-- **Capacity**: 6,362L (1.8m diameter × 2.5m height)
-- **Type**: Cylindrical
-- **Initial Fuel**: 6,362L (100%)
-
-## 🔧 **Installation & Setup**
+## **Installation & Setup**
 
 ### **Prerequisites**
 
@@ -127,9 +100,6 @@ npx prisma generate
 
 # Push schema to database
 npx prisma db push
-
-# Seed database with sample tanks at 100% fuel
-npm run db:seed
 ```
 
 ### **Start Development Server**
@@ -141,7 +111,7 @@ pnpm run start:dev
 The server will start on **port 3002** and automatically:
 
 1. ✅ Connect to SQLite database via Prisma
-2. ✅ Load tanks from database (seeded at 100% fuel)
+2. ✅ Load tanks from database
 3. ✅ Begin automated readings every 30 minutes
 4. ✅ Start SSE stream for real-time updates
 
@@ -153,9 +123,6 @@ npx prisma studio
 
 # Reset database (use with caution)
 npx prisma migrate reset --force
-
-# Re-seed database
-npm run db:seed
 ```
 
 ## 📱 **Web Dashboard**
@@ -391,7 +358,6 @@ model FuelReading {
   "test:cov": "jest --coverage",
   "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
   "test:e2e": "jest --config ./test/jest-e2e.json",
-  "db:seed": "ts-node prisma/seed.ts",
   "db:studio": "prisma studio",
   "db:generate": "prisma generate",
   "db:push": "prisma db push"

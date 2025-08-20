@@ -11,11 +11,11 @@ describe('FuelTankController', () => {
   const mockTank: Tank = {
     id: 'TANK-001',
     name: 'Main Storage Tank A',
-    diameter: 2.5,
-    height: 4.0,
-    capacity: 19635,
-    sensorHeight: 4.0,
-    location: 'Building A - Ground Floor',
+    stationId: 'STN-001',
+    fuelType: 'Gasoline',
+    isLow: false,
+    temperature: 22.5,
+    pression: 1.2,
     createdAt: new Date(),
     updatedAt: new Date(),
   }
