@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
 import { Cron } from '@nestjs/schedule'
 import { Tank, FuelReading } from '@prisma/client'
@@ -5,7 +6,7 @@ import { HttpService } from '@nestjs/axios'
 import { BehaviorSubject, Subject } from 'rxjs'
 import { AxiosResponse } from 'axios'
 
-import { DatabaseService, SensorSimulationService } from './services'
+import { DatabaseService } from './services'
 import { FuelLevelEvent } from './entities'
 
 @Injectable()
@@ -13,7 +14,6 @@ export class FuelTankService implements OnModuleInit {
   private readonly logger = new Logger(FuelTankService.name)
   private readonly fuelLevelUpdates = new Subject<FuelLevelEvent>()
   private connectionStatus = new BehaviorSubject<boolean>(false)
-  private eventSubject = new Subject<string>()
   private reconnectInterval = 5000
   private reconnectTimer?: NodeJS.Timeout
   private abortController?: AbortController
@@ -21,7 +21,6 @@ export class FuelTankService implements OnModuleInit {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly sensorSimulationService: SensorSimulationService,
     private readonly httpService: HttpService,
   ) {
     this.sseUrl = 'http://localhost:3000/api/tank/create'
@@ -100,7 +99,18 @@ export class FuelTankService implements OnModuleInit {
   }
 
   private processSSELines(event: string) {
-    this.eventSubject.next(event)
+    const payload = JSON.parse(event)
+    const { data, ...rest } = payload
+
+    if (!data) {
+      this.logger.warn('No data found in SSE event')
+      return
+    }
+
+    const parsedData = JSON.parse(data)
+    const { deletedAt, ...tankData } = parsedData
+
+    return this.databaseService.createTank(tankData)
   }
 
   private scheduleReconnect() {
@@ -193,7 +203,6 @@ export class FuelTankService implements OnModuleInit {
         await this.databaseService.getLatestReadingForTank(tank.id)
 
       if (!existingReading) {
-        // Initialize with a random fuel level between 20-80%
         const initialFuelPercentage = 20 + Math.random() * 60
         const readingData = this.createFuelReading(tank, initialFuelPercentage)
 
@@ -213,8 +222,7 @@ export class FuelTankService implements OnModuleInit {
       tank.id,
     )
 
-    // Simulate fuel consumption/addition (±0.5% to ±2% change)
-    const changeDirection = Math.random() > 0.7 ? 1 : -1 // 30% chance to increase (refuel), 70% to decrease (consumption)
+    const changeDirection = Math.random() > 0.7 ? 1 : -1
     const changeAmount = (Math.random() * 1.5 + 0.5) * changeDirection
 
     const currentPercentage = latestReading
@@ -247,11 +255,8 @@ export class FuelTankService implements OnModuleInit {
     tank: Tank,
     fuelPercentage: number,
   ): Omit<FuelReading, 'id' | 'timestamp'> {
-    // For the new schema, we'll use standard tank assumptions
-    // Since we don't have physical dimensions, we'll use reasonable defaults
-    const estimatedCapacity = 1000 // Default 1000L capacity
-    const estimatedHeight = 2.0 // Default 2m height
-
+    const estimatedCapacity = 1000
+    const estimatedHeight = 2.0
     const fuelLevelLiters = (fuelPercentage / 100) * estimatedCapacity
     const fuelHeight = (fuelPercentage / 100) * estimatedHeight
     const distanceToFuel = estimatedHeight - fuelHeight

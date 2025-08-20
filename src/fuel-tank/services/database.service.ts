@@ -7,6 +7,12 @@ import { PrismaService } from '../../prisma'
 export class DatabaseService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async createTank(data: Omit<Tank, 'id'>): Promise<Tank> {
+    return this.prisma.tank.create({
+      data,
+    })
+  }
+
   async getTankById(id: string): Promise<Tank | null> {
     return this.prisma.tank.findUnique({
       where: { id },
